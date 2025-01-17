@@ -1,6 +1,5 @@
 import React from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
 import TaskInput from "./components/TaskInput";
@@ -23,14 +22,12 @@ const App = () => {
           Please log in to manage tasks.
         </p>
       ) : (
-        <div className="flex justify-between w-full px-8 py-4 space-x-8">
-          {/* Left Half: Task Input */}
-          <div className="w-1/2">
+        <div className="flex flex-col md:flex-row justify-between w-full px-8 py-4 space-y-8 md:space-y-0 md:space-x-8">
+          <div className="w-full md:w-1/2">
             <TaskInput />
           </div>
 
-          {/* Right Half: Task List */}
-          <div className="w-1/2">
+          <div className="w-full md:w-1/2">
             <TaskList />
           </div>
         </div>
