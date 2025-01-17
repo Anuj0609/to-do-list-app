@@ -51,12 +51,14 @@ const TaskList = () => {
                     {task.priority}
                   </span>
                 </p>
-                {task.weather && (
-                  <div className="text-sm text-gray-500 mt-2">
-                    <p>Weather: {task.weather.description}</p>
-                    <p>Temperature: {task.weather.temperature}°C</p>
-                  </div>
-                )}
+                {task.weather &&
+                  task.weather.description &&
+                  task.weather.temperature && (
+                    <div className="text-sm text-gray-500 mt-2">
+                      <p>Weather: {task.weather.description}</p>
+                      <p>Temperature: {task.weather.temperature}°C</p>
+                    </div>
+                  )}
               </div>
               <button
                 onClick={() => handleDelete(index)}
