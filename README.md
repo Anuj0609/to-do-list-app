@@ -1,8 +1,10 @@
-# React + Vite
+To-Do List App
+This is a simple to-do list app built with React, Redux for state management, and Tailwind CSS for styling. The app allows users to log in, add tasks with priority and weather information, and manage them effectively.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Features:
+User Authentication: Log in and log out functionality.
+Task Management: Add tasks with different priorities (Low, Medium, High).
+Weather Integration: Displays weather information when certain task keywords are entered (e.g., "run", "hike").
+Task Deletion: Delete tasks from the list.
+Responsive Design: The app is fully responsive, ensuring it works on all screen sizes.
+Task Sorting: Tasks are sorted by priority and timestamp.
