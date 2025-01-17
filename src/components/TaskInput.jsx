@@ -7,45 +7,49 @@ const TaskInput = () => {
   const [taskText, setTaskText] = useState("");
   const [priority, setPriority] = useState("Medium");
   const [weather, setWeather] = useState(null);
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
+
+  const getWeatherForCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser.");
+      return null;
+    }
+
+    try {
+      const position = await new Promise((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject)
+      );
+      const { latitude, longitude } = position.coords;
+
+      const response = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=42feaff7e7f178aec2c9ec08ddc1de79&units=metric`
+      );
+      return {
+        description: response.data.weather[0].description,
+        temperature: response.data.main.temp,
+      };
+    } catch (err) {
+      setError("Unable to fetch weather data for your location.");
+      console.error("Geolocation or Weather API error:", err);
+      return null;
+    }
+  };
 
   const handleAddTask = async () => {
     if (taskText.trim() !== "") {
-      let taskWeather = null;
-
-      if (
-        taskText.toLowerCase().includes("run") ||
-        taskText.toLowerCase().includes("hike")
-      ) {
-        const city = "London"; // Replace with dynamic city if needed
-
-        try {
-          const response = await axios.get(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=42feaff7e7f178aec2c9ec08ddc1de79&units=metric`
-          );
-          taskWeather = {
-            description: response.data.weather[0].description,
-            temperature: response.data.main.temp,
-          };
-        } catch (error) {
-          console.error("Weather API error:", error);
-          taskWeather = {
-            description: "Unable to fetch weather data",
-            temperature: "--",
-          };
-        }
-      }
+      const weatherData = await getWeatherForCurrentLocation();
 
       const newTask = {
         text: taskText,
         priority,
         timestamp: new Date().getTime(),
-        weather: taskWeather,
+        weather: weatherData || null,
       };
 
       dispatch(addTask(newTask));
-      setTaskText(""); // Reset input field
-      setWeather(null); // Reset weather info
+      setTaskText("");
+      setWeather(null);
     } else {
       alert("Please enter a task name.");
     }
@@ -74,17 +78,6 @@ const TaskInput = () => {
         <option value="Medium">Medium</option>
         <option value="High">High</option>
       </select>
-
-      {weather && (
-        <div className="mt-4 bg-gray-100 p-4 rounded-lg">
-          <p className="text-sm text-gray-600">
-            Weather: {weather.description}
-          </p>
-          <p className="text-sm text-gray-600">
-            Temperature: {weather.temperature}°C
-          </p>
-        </div>
-      )}
 
       <button
         onClick={handleAddTask}
