@@ -7,43 +7,55 @@ const TaskInput = () => {
   const [priority, setPriority] = useState("Low");
   const dispatch = useDispatch();
 
+  // List of keywords that trigger weather fetching
+  const outdoorKeywords = ["run", "hike", "jog", "bike", "outdoor", "walk"];
+
   // Handle task input
   const handleAddTask = async () => {
     if (taskText.trim() === "") return; // Prevent adding empty tasks
+
+    const weather = await getWeatherForTask(taskText); // Fetch weather data based on task content
 
     const newTask = {
       text: taskText,
       priority,
       timestamp: Date.now(),
-      weather: await getWeatherForCurrentLocation(), // Fetch weather data
+      weather, // Add weather to the task
     };
 
     dispatch(addTask(newTask));
     setTaskText(""); // Clear input field after adding task
   };
 
+  // Get weather for current location if task contains outdoor-related keywords
+  const getWeatherForTask = async (taskText) => {
+    const containsOutdoorKeyword = outdoorKeywords.some((keyword) =>
+      taskText.toLowerCase().includes(keyword)
+    );
+
+    if (!containsOutdoorKeyword) {
+      return null; // No weather data needed for indoor tasks
+    }
+
+    return await getWeatherForCurrentLocation(); // Fetch weather if outdoor-related keyword found
+  };
+
   // Get weather for current location
   const getWeatherForCurrentLocation = async () => {
     try {
-      const geoResponse = await navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          fetch(
-            `https://api.weatherapi.com/v1/current.json?key=42feaff7e7f178aec2c9ec08ddc1de79&q=${latitude},${longitude}`
-          )
-            .then((res) => res.json())
-            .then((data) => {
-              return {
-                description: data.current.condition.text,
-                temperature: data.current.temp_c,
-              };
-            });
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          return null; // Return null if there's an error
-        }
+      const geoResponse = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+
+      const { latitude, longitude } = geoResponse.coords;
+      const response = await fetch(
+        `https://api.weatherapi.com/v1/current.json?key=42feaff7e7f178aec2c9ec08ddc1de79&q=${latitude},${longitude}`
       );
+      const data = await response.json();
+      return {
+        description: data.current.condition.text,
+        temperature: data.current.temp_c,
+      };
     } catch (error) {
       console.error("Error getting weather:", error);
       return null; // Return null in case of error
