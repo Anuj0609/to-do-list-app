@@ -39,6 +39,7 @@ const TaskInput = () => {
   const handleAddTask = async () => {
     if (taskText.trim() !== "") {
       const weatherData = await getWeatherForCurrentLocation();
+      console.log("Weather Data:", weatherData); // Debug weather data
 
       const newTask = {
         text: taskText,
@@ -47,6 +48,7 @@ const TaskInput = () => {
         weather: weatherData || null,
       };
 
+      console.log("New Task:", newTask); // Debug task before dispatch
       dispatch(addTask(newTask));
       setTaskText("");
       setWeather(null);

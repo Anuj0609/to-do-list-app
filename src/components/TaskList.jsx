@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteTask } from "../redux/taskSlice";
 
 const TaskList = () => {
-  const tasks = useSelector((state) => state.tasks.tasks);
+  const tasks = useSelector((state) => state.tasks.tasks); // Correct single declaration
   const dispatch = useDispatch();
 
   const handleDelete = (index) => {
@@ -51,7 +51,6 @@ const TaskList = () => {
                     {task.priority}
                   </span>
                 </p>
-
                 {task.weather && (
                   <div className="text-sm text-gray-500 mt-2">
                     <p>Weather: {task.weather.description}</p>
